@@ -44,22 +44,14 @@ class LevelController extends Controller
 	 */
 	public function init() 
 	{
-		if(!Yii::app()->user->isGuest) {
-			if(Yii::app()->user->level == 1) {
-				$arrThemes = Utility::getCurrentTemplate('admin');
-				Yii::app()->theme = $arrThemes['folder'];
-				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
-			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
-		/*
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		*/
+		//if(!Yii::app()->user->isGuest) {
+		//	if(Yii::app()->user->level == 1) {
+				Yii::app()->theme = 'ommu';
+				$this->layout = 'admin_default';
+		//	} else
+		//		throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		//} else
+		//	$this->redirect(Yii::app()->createUrl('site/login'));
 	}
 
 	/**
@@ -82,7 +74,7 @@ class LevelController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','manage','add','edit','runaction','delete','publish','headline'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -92,7 +84,7 @@ class LevelController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','runaction','delete','publish','headline'),
+				'actions'=>array(),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
@@ -111,34 +103,7 @@ class LevelController extends Controller
 	 */
 	public function actionIndex() 
 	{
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		Utility::applyCurrentTheme($this->module);
-		
-		$setting = UserLevel::model()->findByPk(1,array(
-			'select' => 'meta_description, meta_keyword',
-		));
-
-		$criteria=new CDbCriteria;
-		$criteria->condition = 'publish = :publish';
-		$criteria->params = array(':publish'=>1);
-		$criteria->order = 'creation_date DESC';
-
-		$dataProvider = new CActiveDataProvider('UserLevel', array(
-			'criteria'=>$criteria,
-			'pagination'=>array(
-				'pageSize'=>10,
-			),
-		));
-
-		$this->pageTitle = Yii::t('phrase', 'User Levels');
-		$this->pageDescription = $setting->meta_description;
-		$this->pageMeta = $setting->meta_keyword;
-		$this->render('front_index',array(
-			'dataProvider'=>$dataProvider,
-		));
-		//$this->redirect(array('manage'));
+		$this->redirect(array('manage'));
 	}
 	
 	/**
@@ -214,23 +179,10 @@ class LevelController extends Controller
 
 		if(isset($_POST['UserLevel'])) {
 			$model->attributes=$_POST['UserLevel'];
-
-			/* 
+			
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
+				echo $jsonError;				
 
 			} else {
 				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
@@ -247,16 +199,11 @@ class LevelController extends Controller
 				}
 			}
 			Yii::app()->end();
-			*/
-
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', Yii::t('phrase', 'UserLevel success created.'));
-					//$this->redirect(array('view','id'=>$model->level_id));
-					$this->redirect(array('manage'));
-				}
-			}
 		}
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 500;
 
 		$this->pageTitle = Yii::t('phrase', 'Create User Levels');
 		$this->pageDescription = '';
@@ -280,23 +227,10 @@ class LevelController extends Controller
 
 		if(isset($_POST['UserLevel'])) {
 			$model->attributes=$_POST['UserLevel'];
-
-			/* 
+			
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
+				echo $jsonError;
 
 			} else {
 				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
@@ -313,16 +247,11 @@ class LevelController extends Controller
 				}
 			}
 			Yii::app()->end();
-			*/
-
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', Yii::t('phrase', 'UserLevel success updated.'));
-					//$this->redirect(array('view','id'=>$model->level_id));
-					$this->redirect(array('manage'));
-				}
-			}
 		}
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 500;
 
 		$this->pageTitle = Yii::t('phrase', 'Update User Levels');
 		$this->pageDescription = '';
