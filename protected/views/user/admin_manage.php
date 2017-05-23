@@ -5,11 +5,11 @@
  * @var $model Users
  * version: 0.0.1
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
  * @copyright Copyright (c) 2017 Ommu Platform (opensource.ommu.co)
  * @created date 15 May 2017, 18:25 WIB
  * @link http://opensource.ommu.co
- * @contact (+62)856-299-4114
+ * @contact (+62)83869898725
  *
  */
 

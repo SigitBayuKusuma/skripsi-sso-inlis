@@ -2,12 +2,12 @@
 /**
  * Utility class file
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
  * @create date November 27, 2013 15:02 WIB
  * @update date April 3, 2014 15:02 WIB
  * @copyright Copyright (c) 2013 Ommu Platform (ommu.co)
  * @link https://github.com/ommu/Core
- * @contact (+62)856-299-4114
+ * @contact (+62)83869898725
  *
  */
 

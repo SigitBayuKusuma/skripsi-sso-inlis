@@ -3,11 +3,11 @@
  * OFunction class file
  * version: 1.2.0
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
  * @create date April 15, 2014 10:29 WIB
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link https://github.com/ommu/Core
- * @contact (+62)856-299-4114
+ * @contact (+62)83869898725
  *
  * Contains many function that most used
  *

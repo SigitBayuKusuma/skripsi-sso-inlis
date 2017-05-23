@@ -7,10 +7,10 @@
  *
  * url: http://www.yiiframework.com/wiki/208/how-to-use-an-application-behavior-to-maintain-runtime-configuration/
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link https://github.com/ommu/Core
- * @contact (+62)856-299-4114
+ * @contact (+62)83869898725
  *
  */
  

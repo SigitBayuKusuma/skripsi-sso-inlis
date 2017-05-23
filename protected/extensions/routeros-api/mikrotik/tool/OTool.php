@@ -8,11 +8,11 @@
  *	ppp_active 
  *	ppp_aaa
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
  * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 26 May 2016, 15:15 WIB
  * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @contect (+62)83869898725
  */
  
 defined('TOOL_PATH') or define('TOOL_PATH',dirname(__FILE__).DIRECTORY_SEPARATOR);

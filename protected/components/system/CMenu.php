@@ -9,8 +9,8 @@
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  * 
- * @modify Putra Sudaryanto <putra@sudaryanto.id>
- * @contact (+62)856-299-4114
+ * @modify Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
+ * @contact (+62)83869898725
  *
  */
 
