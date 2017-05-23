@@ -7,27 +7,27 @@
  */
 class LoginForm extends CFormModel
 {
-	public $username;
+	public $email;
 	public $password;
 	public $rememberMe;
 	private $_identity;
 
 	/**
 	 * Declares the validation rules.
-	 * The rules state that username and password are required,
+	 * The rules state that email and password are required,
 	 * and password needs to be authenticated.
 	 */
 	public function rules()
 	{
 		return array(
-			// username and password are required
-			array('username, password', 'required'),
+			// email and password are required
+			array('email, password', 'required'),
 			// rememberMe needs to be a boolean
 			array('rememberMe', 'boolean'),
-            array('username', 'length', 'max'=>32),
+            array('email', 'length', 'max'=>32),
 			// password needs to be authenticated
 			array('password', 'authenticate'),
-			array('username, password', 'safe'),
+			array('email, password', 'safe'),
 		);
 	}
 
@@ -37,7 +37,7 @@ class LoginForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-			'username' => Yii::t('attribute', 'Username'),
+			'email' => Yii::t('attribute', 'Email'),
 			'password' => Yii::t('attribute', 'Password'),
 			'rememberMe' => Yii::t('attribute', 'Remember me next time'),
 		);
@@ -52,7 +52,7 @@ class LoginForm extends CFormModel
 		// we only want to authenticate when no input errors
 		if(!$this->hasErrors())
 		{
-			$this->_identity=new UserIdentity($this->username,$this->password);
+			$this->_identity=new UserIdentity($this->email,$this->password);
 			$this->_identity->authenticate();
 
 			switch($this->_identity->errorCode)
@@ -61,7 +61,7 @@ class LoginForm extends CFormModel
 					Yii::app()->user->login($this->_identity);
 					break;
 				case UserIdentity::ERROR_USERNAME_INVALID:
-					$this->addError('username', Yii::t('phrase', 'Username is incorrect.'));
+					$this->addError('email', Yii::t('phrase', 'Email is incorrect.'));
 					break;
 				default: //UserIdentity::ERROR_PASSWORD_INVALID
 					$this->addError('password', Yii::t('phrase', 'Password is incorrect.'));
@@ -71,14 +71,14 @@ class LoginForm extends CFormModel
 	}
 
 	/**
-	 * Logs in the user using the given username and password in the model.
+	 * Logs in the user using the given email and password in the model.
 	 * @return boolean whether login is successful
 	 */
 	public function login()
 	{
 		if($this->_identity===null)
 		{
-			$this->_identity=new UserIdentity($this->username,$this->password);
+			$this->_identity=new UserIdentity($this->email,$this->password);
 			$this->_identity->authenticate();
 		}
 		if($this->_identity->errorCode===UserIdentity::ERROR_NONE)

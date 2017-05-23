@@ -18,10 +18,10 @@
 
 	<fieldset>
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'username'); ?>
+			<?php echo $form->labelEx($model,'email'); ?>
 			<div class="desc">
-				<?php echo $form->textField($model,'username', array('maxlength'=>32, 'placeholder'=>$model->getAttributeLabel('username'))); ?>
-				<?php echo $form->error($model,'username'); ?>
+				<?php echo $form->textField($model,'email', array('maxlength'=>32, 'placeholder'=>$model->getAttributeLabel('email'))); ?>
+				<?php echo $form->error($model,'email'); ?>
 			</div>
 		</div>
 		<div class="clearfix">

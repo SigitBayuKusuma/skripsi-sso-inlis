@@ -19,18 +19,18 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-		$record = User::model()->findByAttributes(array('username' => $this->username));
+		$record = Users::model()->findByAttributes(array('email' => $this->username));
 		
 		if($record === null)
 			$this->errorCode = self::ERROR_USERNAME_INVALID;		
-		else if($record->user_password !== md5($this->password))
+		else if($record->password !== md5($this->password))
 			$this->errorCode = self::ERROR_PASSWORD_INVALID;		
 		else {
 			$this->_id = $record->user_id;
-			$this->setState('status', $record->status);
+			$this->setState('publish', $record->publish);
 			$this->setState('level', $record->level_id);
-			$this->setState('username', $record->username);
-			$this->setState('displayname', $record->displayname);
+			$this->setState('member', $record->member_id);
+			$this->setState('email', $record->email);
 			$this->setState('creation_date', $record->creation_date);
 			$this->errorCode = self::ERROR_NONE;
 		}

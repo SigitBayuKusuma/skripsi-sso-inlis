@@ -9,14 +9,13 @@
  *
  * TOC :
  *	Index
- *	View
  *	Manage
  *	Add
  *	Edit
+ *	View
  *	RunAction
  *	Delete
  *	Publish
- *	Headline
  *
  *	LoadModel
  *	performAjaxValidation
@@ -44,14 +43,14 @@ class LevelController extends Controller
 	 */
 	public function init() 
 	{
-		//if(!Yii::app()->user->isGuest) {
-		//	if(Yii::app()->user->level == 1) {
+		if(!Yii::app()->user->isGuest) {
+			if(Yii::app()->user->level == 1) {
 				Yii::app()->theme = 'ommu';
 				$this->layout = 'admin_default';
-		//	} else
-		//		throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
-		//} else
-		//	$this->redirect(Yii::app()->createUrl('site/login'));
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
+			$this->redirect(Yii::app()->createUrl('site/login'));
 	}
 
 	/**
@@ -74,7 +73,7 @@ class LevelController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','manage','add','edit','runaction','delete','publish','headline'),
+				'actions'=>array('index'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -84,7 +83,7 @@ class LevelController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
+				'actions'=>array('manage','add','edit','view','runaction','delete','publish'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
@@ -105,36 +104,6 @@ class LevelController extends Controller
 	{
 		$this->redirect(array('manage'));
 	}
-	
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id) 
-	{
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		Utility::applyCurrentTheme($this->module);
-		
-		$setting = VideoSetting::model()->findByPk(1,array(
-			'select' => 'meta_keyword',
-		));
-
-		$model=$this->loadModel($id);
-
-		$this->pageTitle = Yii::t('phrase', 'View User Levels');
-		$this->pageDescription = '';
-		$this->pageMeta = $setting->meta_keyword;
-		$this->render('front_view',array(
-			'model'=>$model,
-		));
-		/*
-		$this->render('admin_view',array(
-			'model'=>$model,
-		));
-		*/
-	}	
 
 	/**
 	 * Manages all models.
@@ -203,7 +172,7 @@ class LevelController extends Controller
 		
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-		$this->dialogWidth = 500;
+		$this->dialogWidth = 600;
 
 		$this->pageTitle = Yii::t('phrase', 'Create User Levels');
 		$this->pageDescription = '';
@@ -251,7 +220,7 @@ class LevelController extends Controller
 		
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-		$this->dialogWidth = 500;
+		$this->dialogWidth = 600;
 
 		$this->pageTitle = Yii::t('phrase', 'Update User Levels');
 		$this->pageDescription = '';
@@ -260,6 +229,26 @@ class LevelController extends Controller
 			'model'=>$model,
 		));
 	}
+	
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionView($id) 
+	{
+		$model=$this->loadModel($id);
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 500;
+
+		$this->pageTitle = Yii::t('phrase', 'View User Levels');
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_view',array(
+			'model'=>$model,
+		));
+	}	
 
 	/**
 	 * Displays a particular model.
@@ -341,19 +330,10 @@ class LevelController extends Controller
 		$model=$this->loadModel($id);
 		
 		if($model->publish == 1) {
-		//if($model->actived == 1) {
-		//if($model->enabled == 1) {
-		//if($model->status == 1) {
 			$title = Yii::t('phrase', 'Unpublish');
-			//$title = Yii::t('phrase', 'Deactived');
-			//$title = Yii::t('phrase', 'Disabled');
-			//$title = Yii::t('phrase', 'Unresolved');
 			$replace = 0;
 		} else {
 			$title = Yii::t('phrase', 'Publish');
-			//$title = Yii::t('phrase', 'Actived');
-			//$title = Yii::t('phrase', 'Enabled');
-			//$title = Yii::t('phrase', 'Resolved');
 			$replace = 1;
 		}
 
@@ -362,9 +342,6 @@ class LevelController extends Controller
 			if(isset($id)) {
 				//change value active or publish
 				$model->publish = $replace;
-				//$model->actived = $replace;
-				//$model->enabled = $replace;
-				//$model->status = $replace;
 
 				if($model->update()) {
 					echo CJSON::encode(array(
@@ -388,44 +365,6 @@ class LevelController extends Controller
 				'title'=>$title,
 				'model'=>$model,
 			));
-		}
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionHeadline($id) 
-	{
-		$model=$this->loadModel($id);
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->headline = 1;
-				$model->publish = 1;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-user-level',
-						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'UserLevel success updated.').'</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = Yii::t('phrase', 'Headline');
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_headline');
 		}
 	}
 
