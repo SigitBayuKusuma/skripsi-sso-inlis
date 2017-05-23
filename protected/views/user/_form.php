@@ -32,7 +32,12 @@
 		<div class="clearfix">
 			<?php echo $form->labelEx($model,'level_id'); ?>
 			<div class="desc">
-				<?php echo $form->textField($model,'level_id'); ?>
+				<?php //echo $form->textField($model,'level_id');
+				$levels = UserLevel::getUserlevel(1);
+				if($levels != null)
+					echo $form->dropDownList($model,'level_id', $levels);
+				else
+					echo $form->dropDownList($model,'level_id', array('prompt'=>'No Select')); ?>
 				<?php echo $form->error($model,'level_id'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
@@ -57,10 +62,19 @@
 		</div>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'password'); ?>
+			<?php echo $form->labelEx($model,'password_input'); ?>
 			<div class="desc">
-				<?php echo $form->passwordField($model,'password',array('maxlength'=>32)); ?>
-				<?php echo $form->error($model,'password'); ?>
+				<?php echo $form->passwordField($model,'password_input',array('maxlength'=>32,'class'=>'span-6')); ?>
+				<?php echo $form->error($model,'password_input'); ?>
+				<?php /*<div class="small-px silent"></div>*/?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'confirm_password_input'); ?>
+			<div class="desc">
+				<?php echo $form->passwordField($model,'confirm_password_input',array('maxlength'=>32,'class'=>'span-6')); ?>
+				<?php echo $form->error($model,'confirm_password_input'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
 		</div>

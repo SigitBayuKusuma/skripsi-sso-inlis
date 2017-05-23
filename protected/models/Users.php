@@ -37,6 +37,11 @@
 class Users extends CActiveRecord
 {
 	public $defaultColumns = array();
+	public $password_input;
+	public $confirm_password_input;
+	
+	// Variable Search
+	public $level_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -65,14 +70,19 @@ class Users extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('level_id, member_id, email, password', 'required'),
+			array('level_id, email,
+				password_input, confirm_password_input', 'required'),
 			array('publish, level_id', 'numerical', 'integerOnly'=>true),
 			array('member_id', 'length', 'max'=>11),
-			array('email, password', 'length', 'max'=>32),
-			array('member_id', 'safe'),
+			array('email, password,
+				password_input, confirm_password_input', 'length', 'max'=>32),
+			array('member_id, password', 'safe'),
+			array('
+				password_input', 'compare', 'compareAttribute' => 'confirm_password_input', 'message' => 'Kedua password tidak sama.'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('user_id, publish, level_id, member_id, email, password, creation_date', 'safe', 'on'=>'search'),
+			array('user_id, publish, level_id, member_id, email, password, creation_date,
+				level_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -101,6 +111,9 @@ class Users extends CActiveRecord
 			'email' => Yii::t('attribute', 'Email'),
 			'password' => Yii::t('attribute', 'Password'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
+			'password_input' => Yii::t('attribute', 'Password'),
+			'confirm_password_input' => Yii::t('attribute', 'Confirm Password'),
+			'level_search' => Yii::t('attribute', 'Level'),
 		);
 		/*
 			'User' => 'User',
@@ -280,6 +293,18 @@ class Users extends CActiveRecord
 			$model = self::model()->findByPk($id);
 			return $model;			
 		}
+	}
+	
+	/**
+	 * before save attributes
+	 */
+	protected function beforeSave() {
+		if(parent::beforeSave()) {
+			$this->email = strtolower($this->email);
+			if($this->password_input != '')
+				$this->password = md5($this->password_input);
+		}
+		return true;	
 	}
 
 }

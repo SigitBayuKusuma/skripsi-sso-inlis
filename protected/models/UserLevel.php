@@ -27,6 +27,7 @@
  * @property integer $publish
  * @property string $level_name
  * @property string $level_desc
+ * @property integer $default
  * @property string $creation_date
  *
  * The followings are the available model relations:
@@ -64,11 +65,11 @@ class UserLevel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('level_name, level_desc', 'required'),
-			array('publish', 'numerical', 'integerOnly'=>true),
+			array('publish, default', 'numerical', 'integerOnly'=>true),
 			array('level_name', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('level_id, publish, level_name, level_desc, creation_date', 'safe', 'on'=>'search'),
+			array('level_id, publish, level_name, level_desc, default, creation_date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,6 +96,7 @@ class UserLevel extends CActiveRecord
 			'level_name' => Yii::t('attribute', 'Level Name'),
 			'level_desc' => Yii::t('attribute', 'Level Desc'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
+			'default' => Yii::t('attribute', 'Default'),
 		);
 		/*
 			'Level' => 'Level',
@@ -137,6 +139,7 @@ class UserLevel extends CActiveRecord
 		}
 		$criteria->compare('t.level_name',strtolower($this->level_name),true);
 		$criteria->compare('t.level_desc',strtolower($this->level_desc),true);
+		$criteria->compare('t.default',$this->default);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 
@@ -174,6 +177,7 @@ class UserLevel extends CActiveRecord
 			$this->defaultColumns[] = 'level_name';
 			$this->defaultColumns[] = 'level_desc';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'default';
 		}
 
 		return $this->defaultColumns;
@@ -224,6 +228,18 @@ class UserLevel extends CActiveRecord
 					),
 				), true),
 			);
+			$this->defaultColumns[] = array(
+				'name' => 'default',
+				'value' => '$data->default',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
+			);
 			if(!isset($_GET['type'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'publish',
@@ -257,6 +273,29 @@ class UserLevel extends CActiveRecord
 			$model = self::model()->findByPk($id);
 			return $model;			
 		}
+	}
+
+	/**
+	 * Get Userlevel
+	 * 0 = unpublish
+	 * 1 = publish
+	 */
+	public static function getUserlevel($publish=null) {
+		
+		$criteria=new CDbCriteria;
+		if($publish != null)
+			$criteria->compare('t.publish',$publish);		
+		$model = self::model()->findAll($criteria);
+
+		$items = array();
+		if($model != null) {
+			foreach($model as $key => $val)
+				$items[$val->level_id] = $val->level_name;
+				
+			return $items;
+			
+		} else
+			return false;
 	}
 
 }
