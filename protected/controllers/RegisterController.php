@@ -157,6 +157,8 @@ class RegisterController extends Controller
 				if(isset($_POST['Users'])) {
 					$model->attributes=$_POST['Users'];
 					
+					$model->level_id = UserLevel::getDefault();
+					
 					if($model->save()) {
 						$this->redirect(Yii::app()->createUrl('site/index'));
 					}

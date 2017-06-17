@@ -275,6 +275,13 @@ class UserLevel extends CActiveRecord
 		}
 	}
 
+	//get Default
+	public static function getDefault() 
+	{
+		$model = self::model()->findByAttributes(array('default' => 1));
+		return $model->level_id;
+	}
+
 	/**
 	 * Get Userlevel
 	 * 0 = unpublish
