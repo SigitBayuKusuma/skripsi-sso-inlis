@@ -157,7 +157,10 @@ class RegisterController extends Controller
 				if(isset($_POST['Users'])) {
 					$model->attributes=$_POST['Users'];
 					
+					$model->level_id = UserLevel::getDefault();			
+					$model->member_id = $member->ID;
 					if($model->save()) {
+	//untuk menambah data ke mikrotik					
 						$this->redirect(Yii::app()->createUrl('site/index'));
 					}
 				}

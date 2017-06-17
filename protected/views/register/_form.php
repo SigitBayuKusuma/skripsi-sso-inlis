@@ -62,51 +62,35 @@
 			</div>
 			<?php //begin.Messages ?>
 
-			<div class="clearfix publish">
-				<?php echo $form->labelEx($model,'publish'); ?>
-				<div class="desc">
-					<?php echo $form->checkBox($model,'publish'); ?>
-					<?php echo $form->labelEx($model,'publish'); ?>
-					<?php echo $form->error($model,'publish'); ?>
-					<?php /*<div class="small-px silent"></div>*/?>
-				</div>
-			</div>
+			
 
 			<div class="clearfix">
-				<?php echo $form->labelEx($model,'level_id'); ?>
-				<div class="desc">
-					<?php echo $form->textField($model,'level_id'); ?>
-					<?php echo $form->error($model,'level_id'); ?>
-					<?php /*<div class="small-px silent"></div>*/?>
-				</div>
+			<?php echo $form->labelEx($model,'email'); ?>
+			<div class="desc">
+				<?php echo $form->textField($model,'email',array('maxlength'=>32)); ?>
+				<?php echo $form->error($model,'email'); ?>
+				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
+		</div>
 
-			<div class="clearfix">
-				<?php echo $form->labelEx($model,'member_id'); ?>
-				<div class="desc">
-					<?php echo $form->textField($model,'member_id',array('size'=>11,'maxlength'=>11)); ?>
-					<?php echo $form->error($model,'member_id'); ?>
-					<?php /*<div class="small-px silent"></div>*/?>
-				</div>
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'password_input'); ?>
+			<div class="desc">
+				<?php echo $form->passwordField($model,'password_input',array('maxlength'=>32,'class'=>'span-6')); ?>
+				<?php echo $form->error($model,'password_input'); ?>
+				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
+		</div>
 
-			<div class="clearfix">
-				<?php echo $form->labelEx($model,'email'); ?>
-				<div class="desc">
-					<?php echo $form->textField($model,'email',array('size'=>32,'maxlength'=>32)); ?>
-					<?php echo $form->error($model,'email'); ?>
-					<?php /*<div class="small-px silent"></div>*/?>
-				</div>
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'confirm_password_input'); ?>
+			<div class="desc">
+				<?php echo $form->passwordField($model,'confirm_password_input',array('maxlength'=>32,'class'=>'span-6')); ?>
+				<?php echo $form->error($model,'confirm_password_input'); ?>
+				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
+		</div>
 
-			<div class="clearfix">
-				<?php echo $form->labelEx($model,'password'); ?>
-				<div class="desc">
-					<?php echo $form->passwordField($model,'password',array('size'=>32,'maxlength'=>32)); ?>
-					<?php echo $form->error($model,'password'); ?>
-					<?php /*<div class="small-px silent"></div>*/?>
-				</div>
-			</div>		
 		<?php }?>
 
 	</fieldset>
