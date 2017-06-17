@@ -9,14 +9,8 @@
  *
  * TOC :
  *	Index
- *	View
  *	Manage
- *	Add
- *	Edit
- *	RunAction
- *	Delete
- *	Publish
- *	Headline
+ *	View
  *
  *	LoadModel
  *	performAjaxValidation
@@ -117,14 +111,9 @@ class MemberController extends Controller
 		$this->pageTitle = Yii::t('phrase', 'View Inlis Members');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
-		$this->render('front_view',array(
-			'model'=>$model,
-		));
-		/*
 		$this->render('admin_view',array(
 			'model'=>$model,
 		));
-		*/
 	}	
 
 	/**
