@@ -96,6 +96,7 @@
 class InlisMembers extends CActiveRecord
 {
 	public $defaultColumns = array();
+	public $sso_condition;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -132,7 +133,8 @@ class InlisMembers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('LoanReturnLateCount, Branch_id, User_id', 'numerical', 'integerOnly'=>true),
+			array('LoanReturnLateCount, Branch_id, User_id,
+				sso_condition', 'numerical', 'integerOnly'=>true),
 			array('MemberNo, Fullname, PlaceOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat', 'length', 'max'=>255),
 			array('CreateBy, CreateTerminal, UpdateBy, UpdateTerminal', 'length', 'max'=>100),
 			array('City, Province, CityNow, ProvinceNow', 'length', 'max'=>45),
@@ -140,7 +142,8 @@ class InlisMembers extends CActiveRecord
 			array('DateOfBirth, RegisterDate, EndDate, CreateDate, UpdateDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ID, MemberNo, Fullname, PlaceOfBirth, DateOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, RegisterDate, EndDate, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, LoanReturnLateCount, Branch_id, User_id, CreateBy, CreateDate, CreateTerminal, UpdateBy, UpdateDate, UpdateTerminal, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat, City, Province, CityNow, ProvinceNow, JobNameDetail', 'safe', 'on'=>'search'),
+			array('ID, MemberNo, Fullname, PlaceOfBirth, DateOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, RegisterDate, EndDate, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, LoanReturnLateCount, Branch_id, User_id, CreateBy, CreateDate, CreateTerminal, UpdateBy, UpdateDate, UpdateTerminal, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat, City, Province, CityNow, ProvinceNow, JobNameDetail,
+				sso_condition', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -157,6 +160,8 @@ class InlisMembers extends CActiveRecord
 			'memberloanauthorizecategories' => array(self::HAS_MANY, 'Memberloanauthorizecategory', 'Member_id'),
 			'memberloanauthorizelocations' => array(self::HAS_MANY, 'Memberloanauthorizelocation', 'Member_id'),
 			'branch' => array(self::BELONGS_TO, 'Branchs', 'Branch_id'),
+			
+			'users' => array(self::HAS_ONE, 'Users', 'member_id'),
 		);
 	}
 
@@ -228,6 +233,7 @@ class InlisMembers extends CActiveRecord
 			'CityNow' => Yii::t('attribute', 'City Now'),
 			'ProvinceNow' => Yii::t('attribute', 'Province Now'),
 			'JobNameDetail' => Yii::t('attribute', 'Job Name Detail'),
+			'sso_condition' => Yii::t('attribute', 'SSO'),
 		);
 		/*
 			'ID' => 'ID',
@@ -384,6 +390,7 @@ class InlisMembers extends CActiveRecord
 		$criteria->compare('t.CityNow',strtolower($this->CityNow),true);
 		$criteria->compare('t.ProvinceNow',strtolower($this->ProvinceNow),true);
 		$criteria->compare('t.JobNameDetail',strtolower($this->JobNameDetail),true);
+		$criteria->compare('t.sso_condition',$this->sso_condition, true);
 
 		if(!isset($_GET['InlisMembers_sort']))
 			$criteria->order = 't.ID DESC';
@@ -486,14 +493,6 @@ class InlisMembers extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
@@ -527,163 +526,20 @@ class InlisMembers extends CActiveRecord
 					),
 				), true),
 			);
-			$this->defaultColumns[] = 'Address';
-			$this->defaultColumns[] = 'AddressNow';
-			$this->defaultColumns[] = 'Phone';
-			$this->defaultColumns[] = 'InstitutionName';
-			$this->defaultColumns[] = 'InstitutionAddress';
-			$this->defaultColumns[] = 'InstitutionPhone';
-			$this->defaultColumns[] = 'IdentityType';
-			$this->defaultColumns[] = 'IdentityNo';
-			$this->defaultColumns[] = 'EducationLevel';
-			$this->defaultColumns[] = 'Religion';
-			$this->defaultColumns[] = 'Sex';
-			$this->defaultColumns[] = 'MaritalStatus';
-			$this->defaultColumns[] = 'JobName';
-			$this->defaultColumns[] = array(
-				'name' => 'RegisterDate',
-				'value' => 'Utility::dateFormat($data->RegisterDate)',
-				'htmlOptions' => array(
-					'class' => 'center',
-				),
-				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
-					'model'=>$this,
-					'attribute'=>'RegisterDate',
-					'language' => 'en',
-					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
-					//'mode'=>'datetime',
-					'htmlOptions' => array(
-						'id' => 'RegisterDate_filter',
-					),
-					'options'=>array(
-						'showOn' => 'focus',
-						'dateFormat' => 'dd-mm-yy',
-						'showOtherMonths' => true,
-						'selectOtherMonths' => true,
-						'changeMonth' => true,
-						'changeYear' => true,
-						'showButtonPanel' => true,
-					),
-				), true),
-			);
-			$this->defaultColumns[] = array(
-				'name' => 'EndDate',
-				'value' => 'Utility::dateFormat($data->EndDate)',
-				'htmlOptions' => array(
-					'class' => 'center',
-				),
-				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
-					'model'=>$this,
-					'attribute'=>'EndDate',
-					'language' => 'en',
-					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
-					//'mode'=>'datetime',
-					'htmlOptions' => array(
-						'id' => 'EndDate_filter',
-					),
-					'options'=>array(
-						'showOn' => 'focus',
-						'dateFormat' => 'dd-mm-yy',
-						'showOtherMonths' => true,
-						'selectOtherMonths' => true,
-						'changeMonth' => true,
-						'changeYear' => true,
-						'showButtonPanel' => true,
-					),
-				), true),
-			);
-			$this->defaultColumns[] = 'BarCode';
-			$this->defaultColumns[] = 'PicPath';
-			$this->defaultColumns[] = 'MotherMaidenName';
 			$this->defaultColumns[] = 'Email';
-			$this->defaultColumns[] = 'JenisPermohonan';
-			$this->defaultColumns[] = 'JenisPermohonanName';
-			$this->defaultColumns[] = 'JenisAnggota';
-			$this->defaultColumns[] = 'JenisAnggotaName';
-			$this->defaultColumns[] = 'StatusAnggota';
-			$this->defaultColumns[] = 'StatusAnggotaName';
 			$this->defaultColumns[] = 'Handphone';
-			$this->defaultColumns[] = 'ParentName';
-			$this->defaultColumns[] = 'ParentAddress';
-			$this->defaultColumns[] = 'ParentPhone';
-			$this->defaultColumns[] = 'ParentHandphone';
-			$this->defaultColumns[] = 'Nationality';
-			$this->defaultColumns[] = 'LoanReturnLateCount';
-			$this->defaultColumns[] = 'Branch_id';
-			$this->defaultColumns[] = 'User_id';
-			$this->defaultColumns[] = 'CreateBy';
 			$this->defaultColumns[] = array(
-				'name' => 'CreateDate',
-				'value' => 'Utility::dateFormat($data->CreateDate)',
+				'name' => 'sso_condition',
+				'value' => '$data->sso_condition == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/unpublish.png\')',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
-					'model'=>$this,
-					'attribute'=>'CreateDate',
-					'language' => 'en',
-					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
-					//'mode'=>'datetime',
-					'htmlOptions' => array(
-						'id' => 'CreateDate_filter',
-					),
-					'options'=>array(
-						'showOn' => 'focus',
-						'dateFormat' => 'dd-mm-yy',
-						'showOtherMonths' => true,
-						'selectOtherMonths' => true,
-						'changeMonth' => true,
-						'changeYear' => true,
-						'showButtonPanel' => true,
-					),
-				), true),
-			);
-			$this->defaultColumns[] = 'CreateTerminal';
-			$this->defaultColumns[] = 'UpdateBy';
-			$this->defaultColumns[] = array(
-				'name' => 'UpdateDate',
-				'value' => 'Utility::dateFormat($data->UpdateDate)',
-				'htmlOptions' => array(
-					'class' => 'center',
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
 				),
-				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
-					'model'=>$this,
-					'attribute'=>'UpdateDate',
-					'language' => 'en',
-					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
-					//'mode'=>'datetime',
-					'htmlOptions' => array(
-						'id' => 'UpdateDate_filter',
-					),
-					'options'=>array(
-						'showOn' => 'focus',
-						'dateFormat' => 'dd-mm-yy',
-						'showOtherMonths' => true,
-						'selectOtherMonths' => true,
-						'changeMonth' => true,
-						'changeYear' => true,
-						'showButtonPanel' => true,
-					),
-				), true),
+				'type' => 'raw',
 			);
-			$this->defaultColumns[] = 'UpdateTerminal';
-			$this->defaultColumns[] = 'AlamatDomisili';
-			$this->defaultColumns[] = 'RT';
-			$this->defaultColumns[] = 'RW';
-			$this->defaultColumns[] = 'Kelurahan';
-			$this->defaultColumns[] = 'Kecamatan';
-			$this->defaultColumns[] = 'Kota';
-			$this->defaultColumns[] = 'KodePos';
-			$this->defaultColumns[] = 'NoHp';
-			$this->defaultColumns[] = 'NamaDarurat';
-			$this->defaultColumns[] = 'TelpDarurat';
-			$this->defaultColumns[] = 'AlamatDarurat';
-			$this->defaultColumns[] = 'StatusHubunganDarurat';
-			$this->defaultColumns[] = 'City';
-			$this->defaultColumns[] = 'Province';
-			$this->defaultColumns[] = 'CityNow';
-			$this->defaultColumns[] = 'ProvinceNow';
-			$this->defaultColumns[] = 'JobNameDetail';
 		}
 		parent::afterConstruct();
 	}
@@ -704,77 +560,11 @@ class InlisMembers extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
-	/**
-	 * before save attributes
-	 */
-	/*
-	protected function beforeSave() {
-		if(parent::beforeSave()) {
-			//$this->DateOfBirth = date('Y-m-d', strtotime($this->DateOfBirth));
-			//$this->RegisterDate = date('Y-m-d', strtotime($this->RegisterDate));
-			//$this->EndDate = date('Y-m-d', strtotime($this->EndDate));
-			//$this->CreateDate = date('Y-m-d', strtotime($this->CreateDate));
-			//$this->UpdateDate = date('Y-m-d', strtotime($this->UpdateDate));
-		}
-		return true;	
+	protected function afterFind() {
+		$this->sso_condition = $this->users != null ? 1 : 0;
+		
+		parent::afterFind();		
 	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

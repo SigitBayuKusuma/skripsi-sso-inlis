@@ -228,12 +228,23 @@ class Users extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'header' => 'No',
+				'name' => 'level_id',
 				'value' => '$data->level->level_name'
 			);
-			$this->defaultColumns[] = 'member_id';
-			$this->defaultColumns[] = 'email';
-			$this->defaultColumns[] = 'password';
+			$this->defaultColumns[] = array(
+				'name' => 'member_id',
+				'value' => '$data->member_id ? $data->member_id : \'-\''
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'email',
+				'value' => '$data->email'
+			);
+			/*
+			$this->defaultColumns[] = array(
+				'name' => 'password',
+				'value' => '$data->password'
+			);
+			*/
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
 				'value' => 'Utility::dateFormat($data->creation_date)',

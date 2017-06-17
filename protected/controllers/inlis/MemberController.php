@@ -1,7 +1,7 @@
 <?php
 /**
- * InlismemberController
- * @var $this InlismemberController
+ * MemberController
+ * @var $this MemberController
  * @var $model InlisMembers
  * @var $form CActiveForm
  * version: 0.0.1
@@ -9,14 +9,8 @@
  *
  * TOC :
  *	Index
- *	View
  *	Manage
- *	Add
- *	Edit
- *	RunAction
- *	Delete
- *	Publish
- *	Headline
+ *	View
  *
  *	LoadModel
  *	performAjaxValidation
@@ -30,7 +24,7 @@
  *----------------------------------------------------------------------------------------------------------
  */
 
-class InlismemberController extends Controller
+class MemberController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -117,14 +111,9 @@ class InlismemberController extends Controller
 		$this->pageTitle = Yii::t('phrase', 'View Inlis Members');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
-		$this->render('front_view',array(
-			'model'=>$model,
-		));
-		/*
 		$this->render('admin_view',array(
 			'model'=>$model,
 		));
-		*/
 	}	
 
 	/**
