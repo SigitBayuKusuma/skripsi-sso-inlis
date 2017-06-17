@@ -111,32 +111,57 @@ class RegisterController extends Controller
 	public function actionForm() 
 	{
 		$model=new Users;
+				
+		$member_i = $_GET['member'];
+		$session_i = $_GET['session'];
+		
+		$step = 1;
+		if(isset($member_i) && !isset($session_i))
+			$step = 2;
+		if(isset($member_i) && isset($session_i))			
+			$step = 3;
+		if($step == 2 || $step == 3)
+			$member = InlisMembers::model()->findByPk($member_i);
+		
+		if(Yii::app()->request->isPostRequest) {			
+			if($step == 1) {
+				$MemberNo = trim($_POST['MemberNo']);
+				if($MemberNo != '') {
+					$criteria=new CDbCriteria;
+					$criteria->select = "ID, MemberNo";
+					$criteria->compare('MemberNo', $MemberNo);
+					$member = InlisMembers::model()->find($criteria);
+					if($member != null) {
+						$memberID = $member->ID;
+						if($member->sso_condition == 0)
+							$this->redirect(Yii::app()->controller->createUrl('form', array('member'=>$member->ID)));				
+						else 
+							Yii::app()->user->setFlash('errorMemberNumberNull', 'Member sudah terdaftar silahkan login.');
+					} else
+						Yii::app()->user->setFlash('errorMemberNumberNull', 'Member number tidak ditemukan.');					
+				} else 
+					Yii::app()->user->setFlash('errorMemberNumberNull', 'Member number tidak boleh kosong.');	
+				
+			} else if($step == 2) {
+				$DateOfBirth = trim($_POST['DateOfBirth']);
+				
+				if(date('Y-m-d', strtotime($member->DateOfBirth)) == date('Y-m-d', strtotime($DateOfBirth)))
+					$this->redirect(Yii::app()->controller->createUrl('form', array('member'=>$member->ID,'session'=>'signup')));
+				else 
+					Yii::app()->user->setFlash('errorMemberDateOfBirthNull', 'Tanggal lahir yang Anda inputkan salah');
+				
+			} else if($step == 3) {
+				// Uncomment the following line if AJAX validation is needed
+				$this->performAjaxValidation($model);
 
-		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
-
-		if(isset($_POST['Users'])) {
-			$model->attributes=$_POST['Users'];
-			
-			$jsonError = CActiveForm::validate($model);
-			if(strlen($jsonError) > 2) {
-				echo $jsonError;
-
-			} else {
-				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
+				if(isset($_POST['Users'])) {
+					$model->attributes=$_POST['Users'];
+					
 					if($model->save()) {
-						echo CJSON::encode(array(
-							'type' => 5,
-							'get' => Yii::app()->controller->createUrl('manage'),
-							'id' => 'partial-users',
-							'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Users success created.').'</strong></div>',
-						));
-					} else {
-						print_r($model->getErrors());
+						$this->redirect(Yii::app()->createUrl('site/index'));
 					}
 				}
 			}
-			Yii::app()->end();
 		}
 		
 		$this->dialogDetail = true;
@@ -148,6 +173,8 @@ class RegisterController extends Controller
 		$this->pageMeta = '';
 		$this->render('front_from',array(
 			'model'=>$model,
+			'member'=>$member,
+			'step'=>$step,
 		));
 	}
 

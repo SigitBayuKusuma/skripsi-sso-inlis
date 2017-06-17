@@ -160,6 +160,7 @@ class InlisMembers extends CActiveRecord
 			'memberloanauthorizecategories' => array(self::HAS_MANY, 'Memberloanauthorizecategory', 'Member_id'),
 			'memberloanauthorizelocations' => array(self::HAS_MANY, 'Memberloanauthorizelocation', 'Member_id'),
 			'branch' => array(self::BELONGS_TO, 'Branchs', 'Branch_id'),
+			
 			'users' => array(self::HAS_ONE, 'Users', 'member_id'),
 		);
 	}
