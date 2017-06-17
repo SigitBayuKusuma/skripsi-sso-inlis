@@ -19,13 +19,7 @@
 	);
 ?>
 
-<?php //begin.Messages ?>
-<?php
-if(Yii::app()->user->hasFlash('success'))
-	echo Utility::flashSuccess(Yii::app()->user->getFlash('success'));
-?>
-<?php //end.Messages ?>
-
+<div class="box">
 <?php $this->widget('application.components.system.FDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -336,9 +330,4 @@ if(Yii::app()->user->hasFlash('success'))
 		),
 	),
 )); ?>
-
-<div class="dialog-content">
-</div>
-<div class="dialog-submit">
-	<?php echo CHtml::button(Yii::t('phrase', 'Close'), array('id'=>'closed')); ?>
 </div>

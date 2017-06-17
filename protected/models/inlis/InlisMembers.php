@@ -96,6 +96,7 @@
 class InlisMembers extends CActiveRecord
 {
 	public $defaultColumns = array();
+	public $sso_condition;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -132,7 +133,8 @@ class InlisMembers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('LoanReturnLateCount, Branch_id, User_id', 'numerical', 'integerOnly'=>true),
+			array('LoanReturnLateCount, Branch_id, User_id,
+				sso_condition', 'numerical', 'integerOnly'=>true),
 			array('MemberNo, Fullname, PlaceOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat', 'length', 'max'=>255),
 			array('CreateBy, CreateTerminal, UpdateBy, UpdateTerminal', 'length', 'max'=>100),
 			array('City, Province, CityNow, ProvinceNow', 'length', 'max'=>45),
@@ -140,7 +142,8 @@ class InlisMembers extends CActiveRecord
 			array('DateOfBirth, RegisterDate, EndDate, CreateDate, UpdateDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ID, MemberNo, Fullname, PlaceOfBirth, DateOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, RegisterDate, EndDate, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, LoanReturnLateCount, Branch_id, User_id, CreateBy, CreateDate, CreateTerminal, UpdateBy, UpdateDate, UpdateTerminal, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat, City, Province, CityNow, ProvinceNow, JobNameDetail', 'safe', 'on'=>'search'),
+			array('ID, MemberNo, Fullname, PlaceOfBirth, DateOfBirth, Address, AddressNow, Phone, InstitutionName, InstitutionAddress, InstitutionPhone, IdentityType, IdentityNo, EducationLevel, Religion, Sex, MaritalStatus, JobName, RegisterDate, EndDate, BarCode, PicPath, MotherMaidenName, Email, JenisPermohonan, JenisPermohonanName, JenisAnggota, JenisAnggotaName, StatusAnggota, StatusAnggotaName, Handphone, ParentName, ParentAddress, ParentPhone, ParentHandphone, Nationality, LoanReturnLateCount, Branch_id, User_id, CreateBy, CreateDate, CreateTerminal, UpdateBy, UpdateDate, UpdateTerminal, AlamatDomisili, RT, RW, Kelurahan, Kecamatan, Kota, KodePos, NoHp, NamaDarurat, TelpDarurat, AlamatDarurat, StatusHubunganDarurat, City, Province, CityNow, ProvinceNow, JobNameDetail,
+				sso_condition', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -157,6 +160,7 @@ class InlisMembers extends CActiveRecord
 			'memberloanauthorizecategories' => array(self::HAS_MANY, 'Memberloanauthorizecategory', 'Member_id'),
 			'memberloanauthorizelocations' => array(self::HAS_MANY, 'Memberloanauthorizelocation', 'Member_id'),
 			'branch' => array(self::BELONGS_TO, 'Branchs', 'Branch_id'),
+			'users' => array(self::HAS_ONE, 'Users', 'member_id'),
 		);
 	}
 
@@ -228,6 +232,7 @@ class InlisMembers extends CActiveRecord
 			'CityNow' => Yii::t('attribute', 'City Now'),
 			'ProvinceNow' => Yii::t('attribute', 'Province Now'),
 			'JobNameDetail' => Yii::t('attribute', 'Job Name Detail'),
+			'sso_condition' => Yii::t('attribute', 'SSO'),
 		);
 		/*
 			'ID' => 'ID',
@@ -384,6 +389,7 @@ class InlisMembers extends CActiveRecord
 		$criteria->compare('t.CityNow',strtolower($this->CityNow),true);
 		$criteria->compare('t.ProvinceNow',strtolower($this->ProvinceNow),true);
 		$criteria->compare('t.JobNameDetail',strtolower($this->JobNameDetail),true);
+		$criteria->compare('t.sso_condition',$this->sso_condition, true);
 
 		if(!isset($_GET['InlisMembers_sort']))
 			$criteria->order = 't.ID DESC';
@@ -521,6 +527,18 @@ class InlisMembers extends CActiveRecord
 			);
 			$this->defaultColumns[] = 'Email';
 			$this->defaultColumns[] = 'Handphone';
+			$this->defaultColumns[] = array(
+				'name' => 'sso_condition',
+				'value' => '$data->sso_condition == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/unpublish.png\')',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
+			);
 		}
 		parent::afterConstruct();
 	}
@@ -540,6 +558,12 @@ class InlisMembers extends CActiveRecord
 			$model = self::model()->findByPk($id);
 			return $model;			
 		}
+	}
+	
+	protected function afterFind() {
+		$this->sso_condition = $this->users != null ? 1 : 0;
+		
+		parent::afterFind();		
 	}
 
 }
