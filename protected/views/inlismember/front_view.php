@@ -6,9 +6,9 @@
  * version: 0.0.1
  *
  * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
- * @copyright Copyright (c) 2017 Ommu Platform (opensource.ommu.co)
+ * @copyright Copyright (c) 2017 Sigit Bayu Kusuma
  * @created date 23 May 2017, 18:43 WIB
- * @link http://opensource.ommu.co
+ * @link https://www.instagram.com/s.bayukusuma/
  * @contact (+62)83869898725
  *
  */
