@@ -1,7 +1,7 @@
 <?php
 /**
- * InlismemberController
- * @var $this InlismemberController
+ * MemberController
+ * @var $this MemberController
  * @var $model InlisMembers
  * @var $form CActiveForm
  * version: 0.0.1
@@ -30,7 +30,7 @@
  *----------------------------------------------------------------------------------------------------------
  */
 
-class InlismemberController extends Controller
+class MemberController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning

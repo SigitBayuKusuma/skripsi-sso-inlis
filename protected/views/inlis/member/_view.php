@@ -1,7 +1,7 @@
 <?php
 /**
  * Inlis Members (inlis-members)
- * @var $this InlismemberController
+ * @var $this MemberController
  * @var $data InlisMembers
  * version: 0.0.1
  *

@@ -1,9 +1,9 @@
 <?php
 /**
  * Inlis Members (inlis-members)
- * @var $this InlismemberController
+ * @var $this MemberController
  * @var $model InlisMembers
- * @var $form CActiveForm
+ * @var $dataProvider CActiveDataProvider
  * version: 0.0.1
  *
  * @author Sigit Bayu Kusuma <sigitbayukusuma@gmail.com>
@@ -15,11 +15,17 @@
  */
 
 	$this->breadcrumbs=array(
-		'Inlis Members'=>array('manage'),
-		'Create',
+		'Inlis Members',
 	);
 ?>
 
-<div class="form">
-	<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
-</div>
+<?php $this->widget('application.components.system.FListView', array(
+	'dataProvider'=>$dataProvider,
+	'itemView'=>'_view',
+	'pager' => array(
+		'header' => '',
+	), 
+	'summaryText' => '',
+	'itemsCssClass' => 'items clearfix',
+	'pagerCssClass'=>'pager clearfix',
+)); ?>
